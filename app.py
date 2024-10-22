@@ -3,15 +3,22 @@ import pandas as pd
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import os
+import json
+from dotenv import load_dotenv
+
+# --- Carregar variáveis de ambiente do arquivo .env ---
+load_dotenv()
 
 # --- Configuração da API Google Sheets ---
 scope = [
     "https://spreadsheets.google.com/feeds", 
     "https://www.googleapis.com/auth/spreadsheets"
 ]
-# Usando variáveis de ambiente para o caminho das credenciais
-creds_path = os.path.join(os.getcwd(), 'credentials.json')
-creds = ServiceAccountCredentials.from_json_keyfile_name(creds_path, scope)
+
+# Obter as credenciais do ambiente
+google_credentials = os.getenv('GOOGLE_CREDENTIALS')
+creds_dict = json.loads(google_credentials)  # Converter de string para dict
+creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
 client = gspread.authorize(creds)
 
 # --- Carrega os dados da planilha ---
